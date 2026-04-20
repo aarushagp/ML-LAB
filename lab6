@@ -1,0 +1,202 @@
+{
+  "nbformat": 4,
+  "nbformat_minor": 0,
+  "metadata": {
+    "colab": {
+      "provenance": [],
+      "authorship_tag": "ABX9TyNs6YFF3/6ev+/Rwn/CI6XM",
+      "include_colab_link": true
+    },
+    "kernelspec": {
+      "name": "python3",
+      "display_name": "Python 3"
+    },
+    "language_info": {
+      "name": "python"
+    }
+  },
+  "cells": [
+    {
+      "cell_type": "markdown",
+      "metadata": {
+        "id": "view-in-github",
+        "colab_type": "text"
+      },
+      "source": [
+        "<a href=\"https://colab.research.google.com/github/1BM23CS046/ML-Lab/blob/main/lab6\" target=\"_parent\"><img src=\"https://colab.research.google.com/assets/colab-badge.svg\" alt=\"Open In Colab\"/></a>"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "execution_count": 4,
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "8-Qx3bbYbHHV",
+        "outputId": "518f086a-71f1-4157-e34a-6f5d47252f3a"
+      },
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Linear Kernel Accuracy: 1.0\n",
+            "Confusion Matrix (Linear):\n",
+            " [[10  0  0]\n",
+            " [ 0  9  0]\n",
+            " [ 0  0 11]]\n",
+            "\n",
+            "RBF Kernel Accuracy: 1.0\n",
+            "Confusion Matrix (RBF):\n",
+            " [[10  0  0]\n",
+            " [ 0  9  0]\n",
+            " [ 0  0 11]]\n"
+          ]
+        }
+      ],
+      "source": [
+        "# Import libraries\n",
+        "import pandas as pd\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.svm import SVC\n",
+        "from sklearn.metrics import accuracy_score, confusion_matrix\n",
+        "\n",
+        "# Load dataset (upload iris.csv in Colab first)\n",
+        "data = pd.read_csv('/content/iris (1) (1) (1).csv')\n",
+        "\n",
+        "# Features and target\n",
+        "X = data.drop('species', axis=1)\n",
+        "y = data['species']\n",
+        "\n",
+        "# Train-test split (80-20)\n",
+        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+        "\n",
+        "# -------- Linear Kernel --------\n",
+        "linear_model = SVC(kernel='linear')\n",
+        "linear_model.fit(X_train, y_train)\n",
+        "\n",
+        "y_pred_linear = linear_model.predict(X_test)\n",
+        "\n",
+        "print(\"Linear Kernel Accuracy:\", accuracy_score(y_test, y_pred_linear))\n",
+        "print(\"Confusion Matrix (Linear):\\n\", confusion_matrix(y_test, y_pred_linear))\n",
+        "\n",
+        "# -------- RBF Kernel --------\n",
+        "rbf_model = SVC(kernel='rbf')\n",
+        "rbf_model.fit(X_train, y_train)\n",
+        "\n",
+        "y_pred_rbf = rbf_model.predict(X_test)\n",
+        "\n",
+        "print(\"\\nRBF Kernel Accuracy:\", accuracy_score(y_test, y_pred_rbf))\n",
+        "print(\"Confusion Matrix (RBF):\\n\", confusion_matrix(y_test, y_pred_rbf))\n",
+        "\n"
+      ]
+    },
+    {
+      "cell_type": "code",
+      "source": [
+        "import pandas as pd\n",
+        "from sklearn.model_selection import train_test_split\n",
+        "from sklearn.svm import SVC\n",
+        "from sklearn.metrics import accuracy_score, confusion_matrix\n",
+        "import matplotlib.pyplot as plt\n",
+        "import numpy as np\n",
+        "from sklearn.preprocessing import label_binarize\n",
+        "from sklearn.metrics import roc_curve, auc\n",
+        "\n",
+        "# ✅ Load dataset WITH header\n",
+        "data = pd.read_csv('/content/letter-recognition.csv')\n",
+        "\n",
+        "# Features and labels\n",
+        "X = data.drop('letter', axis=1)   # remove label column\n",
+        "y = data['letter']                # target column\n",
+        "\n",
+        "# Split\n",
+        "X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)\n",
+        "\n",
+        "# Train model\n",
+        "model = SVC(kernel='rbf', probability=True)\n",
+        "model.fit(X_train, y_train)\n",
+        "\n",
+        "# Predictions\n",
+        "y_pred = model.predict(X_test)\n",
+        "\n",
+        "# Accuracy\n",
+        "print(\"Accuracy:\", accuracy_score(y_test, y_pred))\n",
+        "\n",
+        "# Confusion Matrix\n",
+        "print(\"Confusion Matrix:\\n\", confusion_matrix(y_test, y_pred))"
+      ],
+      "metadata": {
+        "colab": {
+          "base_uri": "https://localhost:8080/"
+        },
+        "id": "u63scitSdNxy",
+        "outputId": "d02728e2-8aa8-4358-c088-24c41f623e65"
+      },
+      "execution_count": 7,
+      "outputs": [
+        {
+          "output_type": "stream",
+          "name": "stdout",
+          "text": [
+            "Accuracy: 0.9305\n",
+            "Confusion Matrix:\n",
+            " [[144   0   1   0   0   0   1   0   0   0   1   0   1   0   0   0   0   0\n",
+            "    0   0   1   0   0   0   0   0]\n",
+            " [  0 143   0   5   0   1   0   0   0   0   0   0   0   0   0   0   0   4\n",
+            "    0   0   0   0   0   0   0   0]\n",
+            " [  0   0 123   0   2   0   3   1   0   0   1   0   0   0   4   0   0   2\n",
+            "    0   0   1   0   0   0   0   0]\n",
+            " [  0   1   0 153   0   0   0   2   0   0   0   0   0   0   0   0   0   0\n",
+            "    0   0   0   0   0   0   0   0]\n",
+            " [  0   3   1   0 130   0   5   0   0   0   0   0   0   0   0   0   1   0\n",
+            "    0   0   0   0   0   0   0   1]\n",
+            " [  0   2   0   0   1 134   0   0   1   0   0   0   0   0   0   0   0   0\n",
+            "    1   1   0   0   0   0   0   0]\n",
+            " [  1   0   1   4   0   0 149   0   0   0   2   0   0   0   0   0   0   2\n",
+            "    0   0   0   1   0   0   0   0]\n",
+            " [  0   4   0   8   0   0   0 106   0   0   5   0   0   1   2   1   1  13\n",
+            "    0   0   2   0   0   0   1   0]\n",
+            " [  0   0   0   1   0   2   0   0 134   7   0   0   0   0   0   0   0   0\n",
+            "    0   0   0   0   0   2   0   0]\n",
+            " [  0   0   0   1   1   1   0   0   3 139   0   0   0   0   1   0   0   0\n",
+            "    3   0   0   0   0   0   0   0]\n",
+            " [  0   0   0   2   0   0   0   1   0   0 112   0   0   0   0   0   0  12\n",
+            "    0   0   0   0   0   3   0   0]\n",
+            " [  0   0   1   0   4   0   3   0   0   0   0 142   0   0   1   0   1   1\n",
+            "    2   0   0   0   0   0   0   0]\n",
+            " [  0   2   0   0   0   0   0   0   0   0   0   0 164   0   0   0   0   2\n",
+            "    0   0   0   0   0   0   0   0]\n",
+            " [  1   0   0   3   0   0   0   0   0   0   0   0   0 139   5   0   0   2\n",
+            "    0   0   0   0   1   0   0   0]\n",
+            " [  0   0   0   4   0   0   0   0   0   0   0   0   1   0 134   0   2   0\n",
+            "    0   0   1   0   3   0   0   0]\n",
+            " [  0   1   0   0   0  14   8   0   0   0   0   0   0   0   0 148   0   0\n",
+            "    0   0   0   0   0   0   2   0]\n",
+            " [  0   3   0   1   3   0   0   0   0   0   0   0   0   0   0   0 159   0\n",
+            "    0   0   0   0   0   0   0   0]\n",
+            " [  0   5   0   2   0   0   0   0   0   0   2   1   0   2   0   0   0 148\n",
+            "    0   0   0   0   0   0   0   0]\n",
+            " [  0   2   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0\n",
+            "  167   0   0   0   0   0   0   1]\n",
+            " [  0   1   0   0   1   0   0   0   0   0   2   0   0   0   0   0   0   1\n",
+            "    0 153   1   0   0   2   1   1]\n",
+            " [  0   0   0   0   0   0   0   0   0   0   2   0   4   0   2   0   0   0\n",
+            "    0   0 170   2   3   0   0   0]\n",
+            " [  1   5   0   0   0   1   0   0   0   0   0   0   1   0   0   0   0   1\n",
+            "    0   0   0 147   2   0   0   0]\n",
+            " [  0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0   0\n",
+            "    0   0   3   0 145   0   0   0]\n",
+            " [  0   1   0   2   0   0   0   0   0   0   1   0   0   0   0   0   0   0\n",
+            "    0   0   0   0   0 150   0   0]\n",
+            " [  1   0   0   1   0   0   0   0   0   0   0   0   0   0   0   0   0   0\n",
+            "    0   1   0   1   0   0 164   0]\n",
+            " [  1   0   0   0   0   0   0   0   0   1   0   0   0   0   0   0   0   1\n",
+            "    4   0   0   0   0   0   0 125]]\n"
+          ]
+        }
+      ]
+    }
+  ]
+}
